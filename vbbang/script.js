@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwrhSXWOq6kmv7qqx5YooteCnTSDd14wMcWvp-JhoD0Ub0drV9Wcxit9LR0-gcceeCf6g/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbympgV5UmFUipOmS_U532GyPHsMyWrbvYpgVZFX9lvhqYwrewtDvfWOKASUDyuUH4MznQ/exec";
 
 const liveContainer = document.getElementById("live-container");
 
@@ -13,7 +13,8 @@ const nameMap = {
   xirus2: "시루냥",
   "015234": "아눙",
   asdk0110: "쏭아야",
-  tpdusdl0218: "뽀뽀"
+  tpdusdl0218: "뽀뽀",
+  gptn1109: "킴아연"
 };
 
 async function loadLive() {
