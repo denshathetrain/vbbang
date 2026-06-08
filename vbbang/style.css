@@ -158,3 +158,36 @@ section {
   color: red;
   font-weight: bold;
 }
+
+.calendar-header{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.calendar-header button{
+    border:none;
+    border-radius:8px;
+    padding:6px 12px;
+    cursor:pointer;
+}
+
+#calendar{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:5px;
+}
+
+.day-header,
+.day{
+    background:white;
+    border-radius:8px;
+    padding:10px;
+    text-align:center;
+}
+
+.day{
+    min-height:60px;
+}
