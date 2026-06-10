@@ -1,6 +1,11 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbympgV5UmFUipOmS_U532GyPHsMyWrbvYpgVZFX9lvhqYwrewtDvfWOKASUDyuUH4MznQ/exec";
+const boardContainer =
+  document.getElementById("board-container");
 
 const liveContainer = document.getElementById("live-container");
+
+const offlineContainer =
+  document.getElementById("offline-container");
 
 // 👤 채널 → 이름 변환
 const nameMap = {
@@ -18,25 +23,32 @@ const nameMap = {
 };
 
 async function loadLive() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
-  console.log("API DATA:", data);
-  liveContainer.innerHTML = "";
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    console.log("API DATA:", data);
+    liveContainer.innerHTML = "";
+    offlineContainer.innerHTML = "";
 
   // 🔥 1. LIVE만 필터
-  const liveOnly = data.filter(item =>
-  item.status && item.status.toUpperCase().includes("LIVE")
-);
+    const liveOnly = data.filter(item =>
+        item.status && item.status.toUpperCase().includes("LIVE")
+    );
 
-  // 🔥 2. 썸네일 + 이름 카드 생성
-  liveOnly.forEach(item => {
+    const offlineOnly = data.filter(item =>
+        !item.status ||
+        !item.status.toUpperCase().includes("LIVE")
+    );
+
+
+    // 🔥 2. 썸네일 + 이름 카드 생성
+liveOnly.forEach(item => {
     const card = document.createElement("div");
     card.className = "live-card";
 
     card.innerHTML = `
-      <img src="${item.img}" onerror="this.style.display='none'">
-      <h3>${nameMap[item.channel] || item.channel}</h3>
-      <p class="live-badge">🔴 LIVE</p>
+        <img src="${item.img}" onerror="this.style.display='none'">
+        <h3>${nameMap[item.channel] || item.channel}</h3>
+        <p class="live-badge">🔴 LIVE</p>
     `;
 
     card.onclick = () => {
@@ -47,8 +59,31 @@ async function loadLive() {
     };
 
     liveContainer.appendChild(card);
+});
+
+// ⚫ 오프라인 목록
+offlineOnly.forEach(item => {
+
+    const div = document.createElement("div");
+
+    div.className = "offline-member";
+
+    div.textContent =
+        nameMap[item.channel] || item.channel;
+
+    div.onclick = () => {
+        window.open(
+            `https://www.sooplive.com/station/${item.channel}`,
+            "_blank"
+        );
+    };
+
+    offlineContainer.appendChild(div);
+
     });
 }
+
+
 
 // 🔄 자동 갱신 (썸네일 자동 반영)
 loadLive();
@@ -61,11 +96,45 @@ const monthTitle = document.getElementById("month-title");
 let currentYear = 2026;
 let currentMonth = 6;
 
-// 공휴일
-const holidays = {
-  6: [6],      // 현충일
-  8: [15]      // 광복절
-};
+const holidayDates = [
+  "2026-06-03",
+  "2026-06-06",
+  "2026-07-17",
+  "2026-08-15",
+  "2026-08-17",
+  "2026-09-24",
+  "2026-09-25",
+  "2026-09-26",
+  "2026-10-03",
+  "2026-10-05",
+  "2026-10-09",
+  "2026-12-25",
+
+  "2027-01-01",
+  "2027-02-06",
+  "2027-02-07",
+  "2027-02-08",
+  "2027-02-09",
+  "2027-03-01",
+  "2027-05-01",
+  "2027-05-05",
+  "2027-05-13",
+  "2027-06-06",
+  "2027-06-07",
+  "2027-07-17",
+  "2027-07-19",
+  "2027-08-15",
+  "2027-08-16",
+  "2027-09-14",
+  "2027-09-15",
+  "2027-09-16",
+  "2027-10-03",
+  "2027-10-04",
+  "2027-10-09",
+  "2027-10-11",
+  "2027-12-25",
+  "2027-12-27"
+];
 
 function prevMonth() {
 
@@ -148,7 +217,10 @@ function renderCalendar(year, month) {
       div.style.color = "blue";
     }
 
-    if (holidays[month]?.includes(date)) {
+    const dateStr =
+      `${year}-${String(month).padStart(2,"0")}-${String(date).padStart(2,"0")}`;
+
+    if (holidayDates.includes(dateStr)) {
       div.style.color = "red";
     }
 
@@ -157,3 +229,17 @@ function renderCalendar(year, month) {
 }
 
 renderCalendar(currentYear, currentMonth);
+
+
+async function loadBoard() {
+
+    const url =
+      "https://api-channel.sooplive.com/v1.1/channel/xirus2/board?perPage=5&orderBy=reg_date&page=1";
+
+    const res = await fetch(url);
+    const json = await res.json();
+
+    console.log("BOARD:", json);
+
+}
+loadBoard();

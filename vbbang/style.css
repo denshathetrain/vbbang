@@ -22,8 +22,8 @@ nav {
     position: sticky;
     top: 10px;
 
-    background: white;
-    padding: 15px;
+    background: #ffeedd;
+    padding: 30px;
     border-radius: 15px;
     margin-bottom: 20px;
     text-align: center;
@@ -190,4 +190,43 @@ section {
 
 .day{
     min-height:60px;
+}
+
+
+.status-divider{
+  margin:20px 0;
+  border:none;
+  border-top:1px solid #444;
+}
+
+#offline-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.offline-member{
+  padding:8px 16px;
+  background:#2a2a2a;
+  border-radius:999px;
+  font-size:16px;
+  color:#white; 
+  cursor:pointer;
+}
+
+.offline-member:hover{
+  color:white;
+  background:#3a3a3a;
+}
+
+.offline-member{
+    color: white !important;
+}
+
+.offline-member:visited{
+    color: white !important;
+}
+
+.offline-member:hover{
+    color: white !important;
 }
