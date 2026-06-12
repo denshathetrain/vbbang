@@ -1,4 +1,87 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbympgV5UmFUipOmS_U532GyPHsMyWrbvYpgVZFX9lvhqYwrewtDvfWOKASUDyuUH4MznQ/exec";
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbyB30o9cjlBO28Mz4eHQBaccpcK3muSzsnLozwqht8jCGnEEvbT9WB0czvaysY3vR6khQ/exec";
+
+const BOARD_API =
+  "https://script.google.com/macros/s/AKfycbyB30o9cjlBO28Mz4eHQBaccpcK3muSzsnLozwqht8jCGnEEvbT9WB0czvaysY3vR6khQ/exec?action=boards";
+let allPosts = [];
+let currentFilter = "ALL";
+console.log("API:", allPosts);
+async function loadBoards() {
+    const res = await fetch(BOARD_API);
+    allPosts = await res.json();
+    console.log("API:", allPosts);
+    renderFilters();
+    renderBoards();
+}
+function stripHTML(html) {
+    return html
+        .replace(/<[^>]+>/g, "")
+        .replace(/&nbsp;/g, " ")
+}
+
+function renderBoards() {
+    console.log("renderBoards 실행됨");
+    console.log("allPosts:", allPosts);
+    const container = document.getElementById("board-container");
+    container.innerHTML = "";
+    let posts = Array.isArray(allPosts) ? allPosts : [];
+    console.log("channels:", posts.map(p => p.channel));
+    if (currentFilter !== "ALL") {
+        posts = posts.filter(p => p.channel === currentFilter);
+    }
+    console.log("currentFilter:", currentFilter);
+    console.log("filtered posts:", posts);
+    console.log("최종 posts 개수:", posts.length);
+    posts.forEach(post => {
+        console.log("post:", post);
+        const card = document.createElement("div");
+        card.className = "board-card";
+        const text = stripHtml(post.content || "");
+        const preview = text.length > 100 ? text.substring(0, 100) + "..." : text;
+        card.innerHTML = `
+            <div class="board-author">${post.channel}</div>
+            <div class="board-preview">${post.status}</div>
+            <div class="board-content">${post.id}</div>
+            <div class="board-date">${post.link}</div>
+        `;
+        card.onclick = () => {
+            window.open(post.link, "_blank");
+        };
+        container.appendChild(card);
+    });
+}
+
+const members = [
+    { id: "ALL", name: "전체" },
+    { id: "vlfvlf789", name: "빵훈이" },
+    { id: "choelssu", name: "철쑤" },
+    { id: "cone2026", name: "코네" },
+    { id: "yotsubakoe", name: "코에" },
+    { id: "yaom0728", name: "야옴" },
+    { id: "dougie0328", name: "올어바웃설이" },
+    { id: "xirus2", name: "시루냥" },
+    { id: "015234", name: "아눙" },
+    { id: "asdk0110", name: "쏭아야" },
+    { id: "tpdusdl0218", name: "뽀뽀" },
+    { id: "gptn1109", name: "킴아연" }
+];
+function renderFilters() {
+    const box = document.getElementById("member-filter");
+    box.innerHTML = "";
+    members.forEach(m => {
+        const btn = document.createElement("button");
+        btn.textContent = m.name;
+        btn.onclick = () => {
+            currentFilter = m.id;
+            renderBoards();
+        };
+        box.appendChild(btn);
+    });
+}
+document.addEventListener("DOMContentLoaded", () => {
+    loadBoards();
+});
+
 const boardContainer =
   document.getElementById("board-container");
 
@@ -231,15 +314,14 @@ function renderCalendar(year, month) {
 renderCalendar(currentYear, currentMonth);
 
 
-async function loadBoard() {
+async function loadBoards() {
 
-    const url =
-      "https://api-channel.sooplive.com/v1.1/channel/xirus2/board?perPage=5&orderBy=reg_date&page=1";
+  const res = await fetch(BOARD_API);
 
-    const res = await fetch(url);
-    const json = await res.json();
+  const posts = await res.json();
 
-    console.log("BOARD:", json);
-
+  console.log("BOARD POSTS:", posts);
 }
-loadBoard();
+
+loadBoards();
+setInterval(loadBoards, 60000);
